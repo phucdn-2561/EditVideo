@@ -12,6 +12,14 @@
 ## Cài đặt
 
 ### Ubuntu
+Nếu quá trình cài đặt moviepy gặp lỗi, thì hãy thử cài đặt riêng từng gói phụ thuộc.
+
+    ```bash
+    pip install imageio
+    pip install numpy
+    pip install Pillow
+    ```
+
 
 1.  **Cài đặt Python 3 và Tkinter:**
 
