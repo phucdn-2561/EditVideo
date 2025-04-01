@@ -18,7 +18,7 @@ class VideoEditor(tk.Frame):  # Kế thừa từ tk.Frame
         super().__init__(master)
         self.master = master
         master.title("Trình chỉnh sửa Video")
-        master.geometry("500x500")  # Đặt kích thước cửa sổ
+        master.geometry("500x600")  # Đặt kích thước cửa sổ
         self.pack(fill=tk.BOTH, expand=True)  # Mở rộng Frame để lấp đầy cửa sổ
 
         self.create_widgets()
@@ -40,6 +40,15 @@ class VideoEditor(tk.Frame):  # Kế thừa từ tk.Frame
         self.split_button = tk.Button(self, text="Chia Video", command=self.split_video, width=20, pady=5)
         self.split_button.pack(pady=10)
 
+        self.clear_button = tk.Button(self, text="Clear", command=self.clear_all, width=20, pady=5)
+
+        self.create_video_label()  # Tạo video_label ban đầu
+
+        # Ẩn nút Clear ban đầu
+        self.clear_button.pack_forget()
+
+    def create_video_label(self):
+        # Tạo mới video_label
         self.video_label = tk.Label(self)
         self.video_label.pack(pady=10)  # Khoảng cách cho label
 
@@ -47,13 +56,25 @@ class VideoEditor(tk.Frame):  # Kế thừa từ tk.Frame
         self.video_path = filedialog.askopenfilename(filetypes=VIDEO_FORMATS)
         if self.video_path:
             messagebox.showinfo("Thông báo", "Đã tải video thành công!")
-            self.play_video()
+            self.play_video()  # Gọi play_video ngay sau khi tải
+            # Hiển thị nút Clear sau khi tải video thành công
+            self.clear_button.pack(pady=10)
 
     def play_video(self):
+        # Kiểm tra xem có video player cũ không và dừng nó (gián tiếp)
         if self.video_player:
-            self.video_player.stop()
-        self.video_player = tkvideo(self.video_path, self.video_label, loop=1, size=(400, 300))
-        self.video_player.play()
+            self.video_player = None  # Đặt thành None để "dừng" phát video
+            self.video_label.destroy() # Destroy the old video_label
+            self.create_video_label() # Create a new video_label
+
+        # Tạo video player mới và phát
+        try:
+            self.video_player = tkvideo(self.video_path, self.video_label, loop=1, size=(400, 300))
+            self.video_player.play()
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Lỗi phát video: {e}")
+            self.video_path = None  # Reset đường dẫn nếu có lỗi
+            self.video_player = None
 
     def trim_video(self):
         if not self.video_path:
@@ -156,6 +177,21 @@ class VideoEditor(tk.Frame):  # Kế thừa từ tk.Frame
             segment_number += 1
 
         messagebox.showinfo("Thông báo", "Đã chia video thành công!")
+
+    def clear_all(self):
+        # Dừng video đang phát (gián tiếp)
+        self.video_player = None
+        self.video_label.destroy() # Destroy the old video_label
+        self.create_video_label() # Create a new video_label
+
+        # Xóa đường dẫn video
+        self.video_path = None
+
+        # Ẩn nút Clear
+        self.clear_button.pack_forget()
+
+        # Hiển thị thông báo
+        messagebox.showinfo("Thông báo", "Đã reset tất cả!")
 
 root = tk.Tk()
 app = VideoEditor(root)
