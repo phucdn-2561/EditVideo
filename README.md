@@ -25,6 +25,7 @@ Nếu quá trình cài đặt moviepy gặp lỗi, thì hãy thử cài đặt r
 
     ```bash
     sudo apt update
+    sudo apt install ffmpeg
     sudo apt install python3 python3-tk
     ```
 
