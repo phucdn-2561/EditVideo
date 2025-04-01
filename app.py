@@ -3,6 +3,7 @@ from tkinter import filedialog, messagebox, simpledialog
 from moviepy.editor import *
 from tkvideo import tkvideo
 import random
+import os  # Để tạo thư mục
 
 class VideoEditor:
     def __init__(self, master):
@@ -21,6 +22,9 @@ class VideoEditor:
 
         self.mix_button = tk.Button(master, text="Trộn Video", command=self.mix_video)
         self.mix_button.pack()
+
+        self.split_button = tk.Button(master, text="Chia Video", command=self.split_video)
+        self.split_button.pack()
 
         self.video_label = tk.Label(master)
         self.video_label.pack()
@@ -108,6 +112,44 @@ class VideoEditor:
                 messagebox.showinfo("Thông báo", "Đã trộn video thành công!")
             except Exception as e:
                 messagebox.showerror("Lỗi", f"Lỗi trộn video: {e}")
+
+    def split_video(self):
+        if not self.video_path:
+            messagebox.showerror("Lỗi", "Vui lòng chọn video trước!")
+            return
+
+        segment_duration = simpledialog.askinteger("Nhập thời gian", "Độ dài mỗi đoạn (giây):")
+        if segment_duration is None or segment_duration <= 0:
+            messagebox.showerror("Lỗi", "Độ dài đoạn video không hợp lệ.")
+            return
+
+        video = VideoFileClip(self.video_path)
+        video_duration = video.duration
+
+        # Tạo thư mục để lưu các đoạn video
+        output_dir = filedialog.askdirectory(title="Chọn thư mục để lưu các đoạn video")
+        if not output_dir:
+            return  # Người dùng hủy chọn thư mục
+
+        base_filename = os.path.splitext(os.path.basename(self.video_path))[0]  # Lấy tên file gốc
+
+        start_time = 0
+        segment_number = 1
+        while start_time < video_duration:
+            end_time = min(start_time + segment_duration, video_duration)
+            segment = video.subclip(start_time, end_time)
+
+            output_path = os.path.join(output_dir, f"{base_filename}_segment_{segment_number}.mp4")
+            try:
+                segment.write_videofile(output_path, codec="libx264")
+            except Exception as e:
+                messagebox.showerror("Lỗi", f"Lỗi xuất đoạn video: {e}")
+                return
+
+            start_time = end_time
+            segment_number += 1
+
+        messagebox.showinfo("Thông báo", "Đã chia video thành công!")
 
 root = tk.Tk()
 app = VideoEditor(root)
