@@ -17,9 +17,6 @@ class VideoEditor:
         self.trim_button = tk.Button(master, text="Cắt Video", command=self.trim_video)
         self.trim_button.pack()
 
-        self.output_button = tk.Button(master, text="Xuất Video", command=self.output_video)
-        self.output_button.pack()
-
         self.mix_button = tk.Button(master, text="Trộn Video", command=self.mix_video)
         self.mix_button.pack()
 
@@ -58,22 +55,17 @@ class VideoEditor:
                 end_time = float(end_time)
                 video = VideoFileClip(self.video_path)
                 trimmed_video = video.subclip(start_time, end_time)
-                self.trimmed_video = trimmed_video
-                messagebox.showinfo("Thông báo", "Đã cắt video thành công!")
+
+                output_path = filedialog.asksaveasfilename(defaultextension=".mp4", filetypes=[("MP4 file", "*.mp4")])
+                if output_path:
+                    try:
+                        trimmed_video.write_videofile(output_path, codec="libx264")
+                        messagebox.showinfo("Thông báo", "Đã cắt và xuất video thành công!")
+                    except Exception as e:
+                        messagebox.showerror("Lỗi", f"Lỗi xuất video: {e}")
+
             except Exception as e:
                 messagebox.showerror("Lỗi", f"Lỗi cắt video: {e}")
-
-    def output_video(self):
-        if hasattr(self, "trimmed_video"):
-            output_path = filedialog.asksaveasfilename(defaultextension=".mp4", filetypes=[("MP4 file", "*.mp4")])
-            if output_path:
-                try:
-                    self.trimmed_video.write_videofile(output_path, codec="libx264")
-                    messagebox.showinfo("Thông báo", "Đã xuất video thành công!")
-                except Exception as e:
-                    messagebox.showerror("Lỗi", f"Lỗi xuất video: {e}")
-        else:
-            messagebox.showerror("Lỗi", "Chưa cắt video!")
 
     def mix_video(self):
         if not self.video_path:
