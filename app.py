@@ -13,29 +13,35 @@ VIDEO_FORMATS = [
     ("All video files", "*.mp4 *.avi *.mov")
 ]
 
-class VideoEditor:
-    def __init__(self, master):
+class VideoEditor(tk.Frame):  # Kế thừa từ tk.Frame
+    def __init__(self, master=None):
+        super().__init__(master)
         self.master = master
         master.title("Trình chỉnh sửa Video")
+        master.geometry("500x500")  # Đặt kích thước cửa sổ
+        self.pack(fill=tk.BOTH, expand=True)  # Mở rộng Frame để lấp đầy cửa sổ
 
-        # Các thành phần giao diện
-        self.load_button = tk.Button(master, text="Chọn Video", command=self.load_video)
-        self.load_button.pack()
-
-        self.trim_button = tk.Button(master, text="Cắt Video", command=self.trim_video)
-        self.trim_button.pack()
-
-        self.mix_button = tk.Button(master, text="Trộn Video", command=self.mix_video)
-        self.mix_button.pack()
-
-        self.split_button = tk.Button(master, text="Chia Video", command=self.split_video)
-        self.split_button.pack()
-
-        self.video_label = tk.Label(master)
-        self.video_label.pack()
+        self.create_widgets()
 
         self.video_path = None
         self.video_player = None
+
+    def create_widgets(self):
+        # Các thành phần giao diện
+        self.load_button = tk.Button(self, text="Chọn Video", command=self.load_video, width=20, pady=5)
+        self.load_button.pack(pady=10)  # Thêm khoảng cách theo chiều dọc
+
+        self.trim_button = tk.Button(self, text="Cắt Video", command=self.trim_video, width=20, pady=5)
+        self.trim_button.pack(pady=10)
+
+        self.mix_button = tk.Button(self, text="Trộn Video", command=self.mix_video, width=20, pady=5)
+        self.mix_button.pack(pady=10)
+
+        self.split_button = tk.Button(self, text="Chia Video", command=self.split_video, width=20, pady=5)
+        self.split_button.pack(pady=10)
+
+        self.video_label = tk.Label(self)
+        self.video_label.pack(pady=10)  # Khoảng cách cho label
 
     def load_video(self):
         self.video_path = filedialog.askopenfilename(filetypes=VIDEO_FORMATS)
