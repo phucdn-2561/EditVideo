@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog
 from moviepy.editor import *
 from tkvideo import tkvideo
+import random
 
 class VideoEditor:
     def __init__(self, master):
@@ -18,6 +19,9 @@ class VideoEditor:
         self.output_button = tk.Button(master, text="Xuất Video", command=self.output_video)
         self.output_button.pack()
 
+        self.mix_button = tk.Button(master, text="Trộn Video", command=self.mix_video)
+        self.mix_button.pack()
+
         self.video_label = tk.Label(master)
         self.video_label.pack()
 
@@ -31,10 +35,10 @@ class VideoEditor:
             self.play_video()
 
     def play_video(self):
-      if self.video_player:
-          self.video_player.stop()
-      self.video_player = tkvideo(self.video_path, self.video_label, loop = 1, size = (400,300))
-      self.video_player.play()
+        if self.video_player:
+            self.video_player.stop()
+        self.video_player = tkvideo(self.video_path, self.video_label, loop=1, size=(400, 300))
+        self.video_player.play()
 
     def trim_video(self):
         if not self.video_path:
@@ -66,6 +70,44 @@ class VideoEditor:
                     messagebox.showerror("Lỗi", f"Lỗi xuất video: {e}")
         else:
             messagebox.showerror("Lỗi", "Chưa cắt video!")
+
+    def mix_video(self):
+        if not self.video_path:
+            messagebox.showerror("Lỗi", "Vui lòng chọn video trước!")
+            return
+
+        segment_duration = simpledialog.askinteger("Nhập thời gian", "Độ dài đoạn video (giây):")
+        if segment_duration is None or segment_duration <= 0:
+            messagebox.showerror("Lỗi", "Độ dài đoạn video không hợp lệ.")
+            return
+
+        video = VideoFileClip(self.video_path)
+        video_duration = video.duration
+
+        segments = []
+        for start_time in range(0, int(video_duration), segment_duration):
+            end_time = min(start_time + segment_duration, video_duration)
+            segments.append((start_time, end_time))  # Lưu trữ (start, end)
+
+        # Tạo danh sách các chỉ số và xáo trộn chúng
+        indices = list(range(len(segments)))
+        random.shuffle(indices)
+
+        # Xây dựng danh sách các đoạn video đã xáo trộn
+        mixed_segments = []
+        for i in indices:
+            start, end = segments[i]
+            mixed_segments.append(video.subclip(start, end))
+
+        mixed_video = concatenate_videoclips(mixed_segments)
+
+        output_path = filedialog.asksaveasfilename(defaultextension=".mp4", filetypes=[("MP4 file", "*.mp4")])
+        if output_path:
+            try:
+                mixed_video.write_videofile(output_path, codec="libx264")
+                messagebox.showinfo("Thông báo", "Đã trộn video thành công!")
+            except Exception as e:
+                messagebox.showerror("Lỗi", f"Lỗi trộn video: {e}")
 
 root = tk.Tk()
 app = VideoEditor(root)
