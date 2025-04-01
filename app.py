@@ -5,6 +5,14 @@ from tkvideo import tkvideo
 import random
 import os  # Để tạo thư mục
 
+# Định nghĩa các hằng số cho định dạng video
+VIDEO_FORMATS = [
+    ("MP4 files", "*.mp4"),
+    ("AVI files", "*.avi"),
+    ("MOV files", "*.mov"),
+    ("All video files", "*.mp4 *.avi *.mov")
+]
+
 class VideoEditor:
     def __init__(self, master):
         self.master = master
@@ -30,7 +38,7 @@ class VideoEditor:
         self.video_player = None
 
     def load_video(self):
-        self.video_path = filedialog.askopenfilename(filetypes=[("Video files", "*.mp4;*.avi;*.mov")])
+        self.video_path = filedialog.askopenfilename(filetypes=VIDEO_FORMATS)
         if self.video_path:
             messagebox.showinfo("Thông báo", "Đã tải video thành công!")
             self.play_video()
