@@ -18,13 +18,14 @@ class VideoEditor(tk.Frame):  # Kế thừa từ tk.Frame
         super().__init__(master)
         self.master = master
         master.title("Trình chỉnh sửa Video")
-        master.geometry("500x600")  # Đặt kích thước cửa sổ
+        master.geometry("500x650")  # Tăng kích thước cửa sổ
         self.pack(fill=tk.BOTH, expand=True)  # Mở rộng Frame để lấp đầy cửa sổ
 
         self.create_widgets()
 
         self.video_path = None
         self.video_player = None
+        self.loaded_videos = [] # Danh sách các video đã chọn để join
 
     def create_widgets(self):
         # Các thành phần giao diện
@@ -39,6 +40,9 @@ class VideoEditor(tk.Frame):  # Kế thừa từ tk.Frame
 
         self.split_button = tk.Button(self, text="Chia Video", command=self.split_video, width=20, pady=5)
         self.split_button.pack(pady=10)
+
+        self.join_button = tk.Button(self, text="Ghép Videos", command=self.join_videos, width=20, pady=5)
+        self.join_button.pack(pady=10)
 
         self.clear_button = tk.Button(self, text="Clear", command=self.clear_all, width=20, pady=5)
 
@@ -178,14 +182,46 @@ class VideoEditor(tk.Frame):  # Kế thừa từ tk.Frame
 
         messagebox.showinfo("Thông báo", "Đã chia video thành công!")
 
+    def join_videos(self):
+        video_paths = filedialog.askopenfilenames(filetypes=VIDEO_FORMATS, title="Chọn các video để ghép")
+        if not video_paths:
+            return
+
+        if len(video_paths) < 2:
+            messagebox.showerror("Lỗi", "Vui lòng chọn ít nhất hai video để ghép.")
+            return
+
+        try:
+            clips = [VideoFileClip(path) for path in video_paths]
+            final_clip = concatenate_videoclips(clips)
+
+            output_path = filedialog.asksaveasfilename(defaultextension=".mp4", filetypes=[("MP4 file", "*.mp4")])
+            if output_path:
+                try:
+                    final_clip.write_videofile(output_path, codec="libx264")
+                    messagebox.showinfo("Thông báo", "Đã ghép các video thành công!")
+                except Exception as e:
+                    messagebox.showerror("Lỗi", f"Lỗi xuất video đã ghép: {e}")
+                finally:
+                    for clip in clips:
+                        clip.close() # Giải phóng tài nguyên
+            else:
+                for clip in clips:
+                    clip.close() # Giải phóng tài nguyên
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Lỗi ghép video: {e}")
+
     def clear_all(self):
         # Dừng video đang phát (gián tiếp)
-        self.video_player = None
-        self.video_label.destroy() # Destroy the old video_label
-        self.create_video_label() # Create a new video_label
+        if self.video_player:
+            self.video_player = None
+        if hasattr(self, 'video_label'): # Kiểm tra xem video_label có tồn tại không
+            self.video_label.destroy() # Destroy the old video_label
+            self.create_video_label() # Create a new video_label
 
         # Xóa đường dẫn video
         self.video_path = None
+        self.loaded_videos = []
 
         # Ẩn nút Clear
         self.clear_button.pack_forget()

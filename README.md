@@ -86,7 +86,8 @@ Nếu quá trình cài đặt moviepy gặp lỗi, thì hãy thử cài đặt r
 2.  **Cắt Video:** Nhấn nút "Cắt Video" để cắt video theo thời gian chỉ định.
 3.  **Trộn Video:** Nhấn nút "Trộn Video" để trộn các đoạn video.
 4.  **Chia Video:** Nhấn nút "Chia Video" để chia video thành nhiều đoạn nhỏ.
-5.  **Clear:** Nhấn nút "Clear" để xóa video đang phát và reset ứng dụng.
+5.  **Ghép Videos:** Nhấn nút "Chia Video" để chia video thành nhiều đoạn nhỏ.
+6.  **Clear:** Nhấn nút "Clear" để xóa video đang phát và reset ứng dụng.
 
 ## Lưu ý
 
