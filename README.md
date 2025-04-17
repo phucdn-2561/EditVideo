@@ -63,13 +63,12 @@
 
 ## Chạy chương trình
 
-1.  Lưu đoạn mã Python vào một file (ví dụ: `video_editor.py`).
-2.  Mở terminal hoặc Command Prompt.
-3.  Di chuyển đến thư mục chứa file Python.
-4.  Chạy lệnh:
+1.  Mở terminal hoặc Command Prompt.
+2.  Di chuyển đến thư mục chứa file Python.
+3.  Chạy lệnh:
 
     ```bash
-    python video_editor.py
+    python app.py
     ```
 
 ## Hướng dẫn sử dụng
@@ -78,7 +77,8 @@
 2.  **Cắt Video:** Nhấn nút "Cắt Video" để cắt video theo thời gian chỉ định.
 3.  **Trộn Video:** Nhấn nút "Trộn Video" để trộn các đoạn video.
 4.  **Chia Video:** Nhấn nút "Chia Video" để chia video thành nhiều đoạn nhỏ.
-5.  **Clear:** Nhấn nút "Clear" để xóa video đang phát và reset ứng dụng.
+5.  **Ghép Videos:** Nhấn nút "Chia Video" để chia video thành nhiều đoạn nhỏ.
+6.  **Clear:** Nhấn nút "Clear" để xóa video đang phát và reset ứng dụng.
 
 ## Lưu ý
 
