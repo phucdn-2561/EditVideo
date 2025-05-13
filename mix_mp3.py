@@ -7,7 +7,7 @@ class MP3Joiner(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        master.title("Ghép File MP3")
+        master.title("Ghép File MP3 tu thu muc cha chua cac thu muc con")
         master.geometry("600x400")
         self.pack(fill=tk.BOTH, expand=True)
 
