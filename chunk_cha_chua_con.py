@@ -151,7 +151,7 @@ class TextFileChunker(tk.Frame):
                 for filename in os.listdir(current_input_subdir):
                     if filename.lower().endswith(".txt"):
                         file_path = os.path.join(current_input_subdir, filename)
-                        file_base_name = os.path.splitext(filename)[0]
+                        file_base_name = os.path.splitext(filename)[0] # Get name without .txt extension
 
                         try:
                             with open(file_path, 'r', encoding='utf-8') as f:
@@ -161,7 +161,8 @@ class TextFileChunker(tk.Frame):
 
                             # Save each chunk to a new file in the dedicated output subfolder
                             for i, chunk in enumerate(chunks):
-                                chunk_filename = os.path.join(current_output_subdir, f"chunk_{i+1}.txt")
+                                # Modified line: Add original file_base_name as prefix to chunk filename
+                                chunk_filename = os.path.join(current_output_subdir, f"{file_base_name}_chunk_{i+1}.txt")
                                 with open(chunk_filename, 'w', encoding='utf-8') as f_chunk:
                                     f_chunk.write(chunk)
 
